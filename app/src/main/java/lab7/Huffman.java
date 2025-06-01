@@ -10,5 +10,30 @@ public class Huffman {
 
     public static void main(String[] args) {
         System.out.println(new Huffman().getGreeting());
+        String text = "hello world";
+        System.out.println("Frequency Table:");
+        System.out.println(frequencyTable(text));
+    
+    }
+
+
+    public static String frequencyTable(String text) {
+        StringBuilder result = new StringBuilder();
+        // ascii
+        int[] frequency = new int[256]; 
+
+        for (char c : text.toCharArray()) {
+            if (text.equals(" ")) {
+                // don't count spaces
+                continue;
+            }    
+            frequency[c]++;
+        }
+        for (int i = 0; i < frequency.length; i++) {
+            if (frequency[i] > 0) {
+                result.append((char) i).append(":").append(frequency[i]).append("\n");
+            }
+        }
+        return result.toString();
     }
 }
