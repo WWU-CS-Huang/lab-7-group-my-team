@@ -23,11 +23,10 @@ public class Huffman {
         int[] frequency = new int[256]; 
 
         for (char c : text.toCharArray()) {
-            if (text.equals(" ")) {
-                // don't count spaces
-                continue;
+            // don't count spaces
+            if (c != ' ') {
+                frequency[c]++;
             }    
-            frequency[c]++;
         }
         for (int i = 0; i < frequency.length; i++) {
             if (frequency[i] > 0) {
