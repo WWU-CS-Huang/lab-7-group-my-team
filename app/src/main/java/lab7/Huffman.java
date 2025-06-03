@@ -3,36 +3,52 @@
  */
 package lab7;
 
+import heap.Heap;
+import java.util.PriorityQueue;
+import java.util.HashMap;
+
 public class Huffman {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
     public static void main(String[] args) {
-        System.out.println(new Huffman().getGreeting());
+        //variables
+        HashMap<Character, Integer> frequencyTable = new HashMap<>();
         String text = "hello world";
+        frequencyTable = initFrequencyTable(text);
+        printFrequencies(frequencyTable);
+    }
+
+    public static void printFrequencies(HashMap map){
         System.out.println("Frequency Table:");
-        System.out.println(frequencyTable(text));
-    
+        System.out.println(map);
     }
 
 
-    public static String frequencyTable(String text) {
+    public static HashMap initFrequencyTable(String text) {
         StringBuilder result = new StringBuilder();
-        // ascii
-        int[] frequency = new int[256]; 
+        HashMap<Character, Integer> frequencies = new HashMap<>();
 
         for (char c : text.toCharArray()) {
             // don't count spaces
             if (c != ' ') {
-                frequency[c]++;
+                //if key c has no instances, returns 0 instead of 'null'
+                frequencies.put(c, frequencies.getOrDefault(c,0) + 1);
             }    
         }
-        for (int i = 0; i < frequency.length; i++) {
-            if (frequency[i] > 0) {
-                result.append((char) i).append(":").append(frequency[i]).append("\n");
-            }
-        }
-        return result.toString();
+
+        return frequencies;
+    }
+}
+
+class Node {
+    char character;
+    int frequency;
+    Node left;
+    Node right;
+
+    //constructor
+    Node(char character, int frequency){
+        this.character = character;
+        this.frequency = frequency;
+        left = null;
+        right = null;
     }
 }

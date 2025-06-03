@@ -7,9 +7,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class HuffmanTest {
-    @Test public void appHasAGreeting() {
+    @Test public void frequencyTable001() {
+        String sampleTxt = "hello world";
         Huffman classUnderTest = new Huffman();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+        assertEquals(classUnderTest.frequencyTable(sampleTxt), "d:1\ne:1\nh:!\nl:3\n:o:2\nr:!\nw:1\n");
     }
     
 }
