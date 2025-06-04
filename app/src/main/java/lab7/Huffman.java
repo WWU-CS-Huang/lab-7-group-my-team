@@ -5,6 +5,7 @@ package lab7;
 
 import java.util.PriorityQueue;
 import java.util.HashMap;
+import heap.Heap;
 
 public class Huffman {
     public static void main(String[] args) {
@@ -43,6 +44,18 @@ public class Huffman {
         Node root = newNode
 
     */
+    while (forest.size() > 1) {
+        Node left = forest.poll();  
+        Node right = forest.poll();
+    }
+    Node newNode = new Node('\0', left.frequency + right.frequency);
+    newNode.left = left;
+    newNode.right = right;
+
+    //add newNode back to priorityQueue
+    forest.add(newNode);
+    Node root = newNode;
+    }
 
 
 //PRINT FOR DEBUGGING
