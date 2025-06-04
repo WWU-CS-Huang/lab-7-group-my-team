@@ -3,38 +3,62 @@
  */
 package lab7;
 
-import heap.Heap;
 import java.util.PriorityQueue;
 import java.util.HashMap;
 
 public class Huffman {
     public static void main(String[] args) {
-        //variables
-        HashMap<Character, Integer> frequencyTable = new HashMap<>();
         String text = "hello world";
-        frequencyTable = initFrequencyTable(text);
-        printFrequencies(frequencyTable);
-    }
 
-    public static void printFrequencies(HashMap map){
-        System.out.println("Frequency Table:");
-        System.out.println(map);
-    }
-
-
-    public static HashMap initFrequencyTable(String text) {
-        StringBuilder result = new StringBuilder();
+        //create hashmap from text
         HashMap<Character, Integer> frequencies = new HashMap<>();
-
         for (char c : text.toCharArray()) {
-            // don't count spaces
-            if (c != ' ') {
+            if (c != ' ') {     //check for spaces
                 //if key c has no instances, returns 0 instead of 'null'
                 frequencies.put(c, frequencies.getOrDefault(c,0) + 1);
             }    
         }
 
-        return frequencies;
+        //create priority queue (val = letter, priority = frequency) from hashmap
+        /* When adding node, compare node a to node b to keep queue sorted
+            if negative, a is less frequent than b, so the priority is lower and it goes first
+            if positive, a is more frequent than b, so the priority is higher and it goes last
+        */
+        PriorityQueue<Node> forest = new PriorityQueue<>((a,b) -> a.frequency - b.frequency);
+        for (char c : frequencies.keySet()) {
+            forest.add(new Node(c, frequencies.get(c)));
+        }
+
+    /* =TO DO= */
+    /* while forest has 2 or more nodes{
+            get two lowest frequency nodes (left) and (right)  <---- use poll()?
+        
+        new Node : Character = null, frequency = left + right
+        newNode.left = left;
+        newNode.right = right;
+        
+        add newNode back to priorityQueue
+        }
+
+        Node root = newNode
+
+    */
+
+
+//PRINT FOR DEBUGGING
+        printFrequencies(frequencies);
+        System.out.println("\nForest as PQ:");
+        Node node;
+        while(!forest.isEmpty()){
+            node = forest.poll();
+            System.out.println(node.character + ":" + node.frequency);
+        }
+    }
+
+    /* Helper method to print frequencyTable */
+    public static void printFrequencies(HashMap map){
+        System.out.println("\nFrequency Table:");
+        System.out.println(map);
     }
 }
 
@@ -44,7 +68,7 @@ class Node {
     Node left;
     Node right;
 
-    //constructor
+    //constructor for Nodes
     Node(char character, int frequency){
         this.character = character;
         this.frequency = frequency;

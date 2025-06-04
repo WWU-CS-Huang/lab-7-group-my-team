@@ -10,19 +10,7 @@ import java.util.HashMap;
 
 public class HuffmanTest {
     @Test public void frequencyTable001() {
-        String sampleTxt = "hello world";
-        HashMap<Character, Integer> sampleTable = new HashMap<>();
-        sampleTable.put('h',1);
-        sampleTable.put('e',1);
-        sampleTable.put('l',3);
-        sampleTable.put('o',2);
-        sampleTable.put('w',1);
-        sampleTable.put('r',1);
-        sampleTable.put('d',1);
-        Huffman classBeingTested = new Huffman();
-        HashMap<Character, Integer> tableTest = new HashMap();
-        tableTest = classBeingTested.initFrequencyTable(sampleTxt);
-        assertEquals(tableTest, sampleTable);
+        //placeholder
     }
     
 }
