@@ -9,72 +9,126 @@ import heap.Heap;
 
 public class Huffman {
     public static void main(String[] args) {
-        String text = "hello world";
+        /* TO DO :
+        Scan file
+        Save as text*/
 
-        //create hashmap from text
-        HashMap<Character, Integer> frequencies = new HashMap<>();
+        //variables
+        String text = "hello world";     //input text
+        HashMap<Character, Integer> frequencies = new HashMap<>(); //(char, frequency)
+        PriorityQueue<Node> forest = new PriorityQueue<>((a,b) -> a.frequency - b.frequency); //(char, frequency. comparator maintains ascending order by frequency) 
+
+
+        //save text frequencies in hashmap
         for (char c : text.toCharArray()) {
-            if (c != ' ') {     //check for spaces
-                //if key c has no instances, returns 0 instead of 'null'
-                frequencies.put(c, frequencies.getOrDefault(c,0) + 1);
-            }    
+            //if key c has no instances, returns 0 instead of 'null'
+            frequencies.put(c, frequencies.getOrDefault(c,0) + 1);
         }
-
-        //create priority queue (val = letter, priority = frequency) from hashmap
-        /* When adding node, compare node a to node b to keep queue sorted
-            if negative, a is less frequent than b, so the priority is lower and it goes first
-            if positive, a is more frequent than b, so the priority is higher and it goes last
-        */
-        PriorityQueue<Node> forest = new PriorityQueue<>((a,b) -> a.frequency - b.frequency);
+        //create priority queue from hashmap
         for (char c : frequencies.keySet()) {
             forest.add(new Node(c, frequencies.get(c)));
         }
 
-    /* =TO DO= */
-    /* while forest has 2 or more nodes{
-            get two lowest frequency nodes (left) and (right)  <---- use poll()?
+        //PRINT FREQUENCY MAP FOR DEBUGGING
+        // System.out.println("\nFrequency Table:");
+        // System.out.println(frequencies);
         
-        new Node : Character = null, frequency = left + right
-        newNode.left = left;
-        newNode.right = right;
-        
-        add newNode back to priorityQueue
+
+        //merge forest Nodes into a tree
+        while (forest.size() > 1) {
+            //variables
+            Node left = forest.poll();  
+            Node right = forest.poll();
+            Node newNode = new Node('\0', left.frequency + right.frequency);
+
+            //assign children
+            newNode.left = left;
+            newNode.right = right;
+
+            //add newNode back to priorityQueue
+            forest.add(newNode);
         }
 
-        Node root = newNode
+        //root of tree is only node left in queue
+        Node root = forest.poll();
 
-    */
-    while (forest.size() > 1) {
-        Node left = forest.poll();  
-        Node right = forest.poll();
-    }
-    Node newNode = new Node('\0', left.frequency + right.frequency);
-    newNode.left = left;
-    newNode.right = right;
-
-    //add newNode back to priorityQueue
-    forest.add(newNode);
-    Node root = newNode;
+        printResults(text, root);
     }
 
+    /* Helper method to print results */
+    private static void printResults(String text, Node root){
+        //PRINT RESULTS
+        StringBuilder encodedString = new StringBuilder();
+        HashMap<Character, String> codeMap = new HashMap<>();
+        encodeToMap(root, encodedString, codeMap);
 
-//PRINT FOR DEBUGGING
-        printFrequencies(frequencies);
-        System.out.println("\nForest as PQ:");
-        Node node;
-        while(!forest.isEmpty()){
-            node = forest.poll();
-            System.out.println(node.character + ":" + node.frequency);
+
+        //PRINT MAP FOR DEBUGGING
+        // System.out.println("\nString as map: " + codeMap);
+
+        System.out.println("\nInput string: " + text);
+        System.out.println("Encoded string: " + encode(text, codeMap));
+        if (text.length() < 100){System.out.println("Decoded string: " + decode(encode(text, codeMap), root));}
+
+        //TO DO:
+        // System.out.println("Decoded equals input: " + T/F);
+        // System.out.println("Compression ratio: " + (length(encoded bitstring) / length(input) / 8.0));
+    }
+
+    /* Helper method to encode nodes into a hashmap using a stringbuilder and recursion*/
+    private static void encodeToMap(Node root, StringBuilder str, HashMap codeMap){
+        //if leaf, print the string and add it to hashmap
+        if (root.character != '\0'){
+            codeMap.put(root.character, str.toString());
+        }
+
+        //recursively traverse and add numbers
+        if (root.left != null){
+            encodeToMap(root.left, str.append('0'), codeMap);
+            str.deleteCharAt(str.length()-1);
+        }
+        if (root.right != null){
+            encodeToMap(root.right, str.append('1'), codeMap);
+            str.deleteCharAt(str.length()-1);
         }
     }
 
-    /* Helper method to print frequencyTable */
-    public static void printFrequencies(HashMap map){
-        System.out.println("\nFrequency Table:");
-        System.out.println(map);
+    /* Helper method to encode a string and return it */
+    //TO DO: change to string builder instead of concatonation
+    private static String encode(String string, HashMap encoder){
+        String newText = "";
+        for (char c : string.toCharArray()){{newText += encoder.get(c);}}
+        return newText;
+    }
+
+    /* Helper method to decode a string and return it */
+    //TO DO: change to string builder instead of concatonation
+    private static String decode(String string, Node root){
+        String newText = "";
+        Node cur = root;
+
+        //for each number
+        for(int i = 0; i < string.length(); i++){
+
+            //move left or right
+            if (string.charAt(i) == '0'){cur = cur.left;} 
+            else {cur = cur.right;}
+
+            //if leaf, add character
+            if (cur.left == null && cur.right == null){
+                newText += cur.character;
+                cur = root;
+            }
+        }
+        return newText;
     }
 }
 
+/* Node class with:
+    char
+    frequency
+    left/right Nodes
+    */
 class Node {
     char character;
     int frequency;
