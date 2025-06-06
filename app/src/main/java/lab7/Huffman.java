@@ -4,17 +4,40 @@
 package lab7;
 
 import java.util.PriorityQueue;
+import java.io.FileNotFoundException;
+import java.io.File;
+import java.util.Scanner;
 import java.util.HashMap;
 import heap.Heap;
 
 public class Huffman {
     public static void main(String[] args) {
-        /* TO DO :
-        Scan file
-        Save as text*/
+        
+        if (args.length < 1) {
+            System.out.println("specify a file to read");
+            return;
+        }
 
+        String filename = args[0];
+        StringBuilder textBuilder = new StringBuilder();
+
+        // Scan file
+        try {
+          File file = new File(filename);
+          Scanner scanboy = new Scanner(file);
+          // Save as text
+          while (scanboy.hasNextLine()) {
+            textBuilder.append(scanboy.nextLine());
+          }
+
+          scanboy.close();
+        } catch (FileNotFoundException e) {
+          System.out.println("File not found: " + filename);
+          return;
+        } 
+
+        String text = textBuilder.toString();
         //variables
-        String text = "hello world";     //input text
         HashMap<Character, Integer> frequencies = new HashMap<>(); //(char, frequency)
         PriorityQueue<Node> forest = new PriorityQueue<>((a,b) -> a.frequency - b.frequency); //(char, frequency. comparator maintains ascending order by frequency) 
 
@@ -30,8 +53,8 @@ public class Huffman {
         }
 
         //PRINT FREQUENCY MAP FOR DEBUGGING
-        // System.out.println("\nFrequency Table:");
-        // System.out.println(frequencies);
+        System.out.println("\nFrequency Table:");
+        System.out.println(frequencies);
         
 
         //merge forest Nodes into a tree
@@ -62,17 +85,20 @@ public class Huffman {
         HashMap<Character, String> codeMap = new HashMap<>();
         encodeToMap(root, encodedString, codeMap);
 
-
+        String encoded = encode(text, codeMap);
+        String decoded = decode(encoded, root);
         //PRINT MAP FOR DEBUGGING
         // System.out.println("\nString as map: " + codeMap);
 
         System.out.println("\nInput string: " + text);
-        System.out.println("Encoded string: " + encode(text, codeMap));
+        System.out.println("Encoded string: " + encoded);
         if (text.length() < 100){System.out.println("Decoded string: " + decode(encode(text, codeMap), root));}
 
-        //TO DO:
-        // System.out.println("Decoded equals input: " + T/F);
-        // System.out.println("Compression ratio: " + (length(encoded bitstring) / length(input) / 8.0));
+        // Boolean check
+        System.out.println(text.equals(decoded));
+        // Compression ratio
+        double compressionRatio = (double) encoded.length() / (text.length() * 8.0);
+        System.out.println(compressionRatio);
     }
 
     /* Helper method to encode nodes into a hashmap using a stringbuilder and recursion*/
